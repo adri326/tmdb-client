@@ -5,19 +5,46 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TMDB Client</title>
-    <script src="src/index.js" type="module"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="/static/index.js" type="module" defer></script>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <main>
-
+        <ul id="movie-list">{{#movies}}
+            <li tabindex="0" id="movie-{{id}}">
+                <h2>{{title}}</h2>
+                <img class="poster-preview" loading="lazy" src="{{poster_preview}}" width="200" height="300" alt="Poster preview for {{title}}" />
+                <footer>
+                    <i class="date">{{release_date}}</i>
+                    <!-- TODO: adult icon, status indicator for upcoming movies -->
+                </footer>
+            </li>
+        {{/movies}}</ul>
     </main>
 
-    <footer>
+    <div class="dialog-container" id="movie-dialog" aria-labelledby="movie-title" aria-hidden="true">
+        <div class="dialog-overlay" data-a11y-dialog-hide></div>
+
+        <div class="dialog-box" role="document">
+            <!-- Close button -->
+            <button data-a11y-dialog-hide class="dialog-close" aria-label="Close the movie information window">
+                &times;
+            </button>
+
+            <h1 id="movie-title">Movie title</h1>
+            TODO :)
+        </div>
+    </div>
+
+    <footer id="about">
         <details>
             <summary>About</summary>
             This product uses the TMDB API but is not endorsed or certified by TMDB.
-            <img src="./assets/tmdb-logo-long.svg" class="tmdb-logo">
+            <img src="/static/assets/tmdb-logo-long.svg" class="tmdb-logo">
         </details>
     </footer>
 </body>
