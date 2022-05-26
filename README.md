@@ -1,9 +1,11 @@
 # Client for The Movie Database (TMDb)
 
 TODO:
-- [ ] post function
+- ~~post function~~
 - [x] fetch the list of movies and each movie's informations
 - [x] required endpoints
+- [x] cache for the pictures
+- [x] cache for the search results
 - [ ] clarify and document backend
 - [ ] automatic testing of the backend?
 - [x] display them to the client
@@ -11,5 +13,6 @@ TODO:
 - [x] implement infinite scrolling
 - [x] use mustache.js to handle the dialog box
 - [ ] clarify and document frontend
-- [ ] cache for the pictures
 - [ ] arrow controls
+- [ ] revise the "about" footer
+- [ ] mobile layout

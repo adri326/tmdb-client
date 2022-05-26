@@ -27,6 +27,25 @@ app.get("/", async (req, res, next) => {
     }));
 });
 
+app.get("/preview/:id", (req, res, next) => {
+    let match = /^(\d+).jpg$/.exec(req.params.id);
+    if (!match) {
+        res.statusCode = 400;
+        res.setHeader("Content-Type", "text/plain");
+        return res.send("Expected id to be of the format [number].jpg, got " + req.params.id);
+    }
+
+    api.get_poster_preview(+match[1]).then(poster => {
+        res.setHeader("Content-Type", "image/jpeg");
+        res.send(poster);
+    }).catch(err => {
+        console.error(err);
+        res.statusCode = 500;
+        res.setHeader("Content-Type", "text/plain");
+        return res.send(`Error while fetching preview for movie ${match[1]}: ${err.toString()}`);
+    });
+});
+
 app.get("/api/movie/:id", (req, res, next) => {
     let match = /^\d+$/.exec(req.params.id);
     res.setHeader("Content-Type", "application/json");
