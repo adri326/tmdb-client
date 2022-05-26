@@ -174,7 +174,7 @@ function timed_cache(callback, timeout, keepalive = false) {
         let now = Date.now();
         for (let [key, entry] of cache) {
             if (entry[1] < now - timeout) {
-                cache.remove(key);
+                cache.delete(key);
             }
         }
     }, timeout);

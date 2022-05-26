@@ -15,4 +15,4 @@ TODO:
 - [ ] clarify and document frontend
 - [ ] arrow controls
 - [ ] revise the "about" footer
-- [ ] mobile layout
+- [x] mobile layout
