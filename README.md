@@ -6,7 +6,7 @@ TODO:
 - [x] required endpoints
 - [x] cache for the pictures
 - [x] cache for the search results
-- [ ] clarify and document backend
+- [x] clarify and document backend
 - [ ] automatic testing of the backend?
 - [x] display them to the client
 - [x] implement a modal screen when the client clicks on a movie

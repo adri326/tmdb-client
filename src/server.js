@@ -1,5 +1,4 @@
 "strict mode";
-
 import url from "node:url";
 import path from "node:path";
 import fs from "node:fs";
@@ -8,14 +7,33 @@ import express from "express";
 import mustache from "mustache";
 import * as api from "./api.js";
 
-const app = express();
+/**
+* Server module: provides an Express router for rendering pages and exposing the api
+* @module server
+**/
 
+/** The Express instance for this module, serves all of the routes described here. **/
+export const app = express();
+
+/**
+* Serves files using `Express.static` to `/static`
+* @route GET /static/{path}
+* @param path - The path of the file in the static directory
+**/
 app.use("/static", express.static(path.join(process.cwd(), "static")));
 
-app.get("/", async (req, res, next) => {
-    const index_template = fs.readFileSync("public/index.html", "utf8");
-    const movie_template = fs.readFileSync("public/movie.html", "utf8");
+/// Mustache template for the index page (served on `/`)
+const index_template = fs.readFileSync("public/index.html", "utf8");
+/// Mustache template for a movie card (served on `/` and on `/api/now_playing/{id}`
+const movie_template = fs.readFileSync("public/movie.html", "utf8");
+/// Mustache template for a dialog box (served on `/api/movie/{id}`
+const dialog_template = fs.readFileSync("public/dialog.html", "utf8");
 
+/**
+* Serves the index page, generated from `index_template` and `movie_template` (as a partial)
+* @route GET /
+**/
+app.get("/", async (req, res, next) => {
     let view = {
         movies: await api.get_now_playing()
     };
@@ -27,6 +45,11 @@ app.get("/", async (req, res, next) => {
     }));
 });
 
+/**
+* Serves the preview of the poster for a given movie. The preview has a width of 200, if available.
+* @route /preview/{id}.jpg
+* @param id - The movie ID - Number
+**/
 app.get("/preview/:id", (req, res, next) => {
     let match = /^(\d+).jpg$/.exec(req.params.id);
     if (!match) {
@@ -46,6 +69,12 @@ app.get("/preview/:id", (req, res, next) => {
     });
 });
 
+/**
+* Serves the dialog box for a given movie, generated from `dialog_template`.
+* @route /api/movie/{id}
+* @param id - The movie ID - Number
+* @returns `{value: "Rendered HTML"}`
+**/
 app.get("/api/movie/:id", (req, res, next) => {
     let match = /^\d+$/.exec(req.params.id);
     res.setHeader("Content-Type", "application/json");
@@ -56,8 +85,6 @@ app.get("/api/movie/:id", (req, res, next) => {
             error: "Expected id to be a number, got " + req.params.id
         }));
     }
-
-    const dialog_template = fs.readFileSync("public/dialog.html", "utf8");
 
     api.get_movie(+match[0]).then(movie => {
         res.send(JSON.stringify({
@@ -72,6 +99,12 @@ app.get("/api/movie/:id", (req, res, next) => {
     });
 });
 
+/**
+* Serves a single page of the `now_playing` endpoint, rendered using `movie_template`
+* @route /api/now_playing/{page}
+* @param page - The page index - Number
+* @returns `["Rendered movie 1", "Rendered movie 2", ...]`
+**/
 app.get("/api/now_playing/:page", (req, res, next) => {
     let match = /^\d+$/.exec(req.params.page);
     res.setHeader("Content-Type", "application/json");
@@ -82,8 +115,6 @@ app.get("/api/now_playing/:page", (req, res, next) => {
             error: "Expected page to be a number, got " + req.params.page
         }));
     }
-
-    const movie_template = fs.readFileSync("public/movie.html", "utf8");
 
     api.get_now_playing(+match[0]).then(movies => {
         res.send(JSON.stringify(movies.map(movie => {
