@@ -1,0 +1,35 @@
+<div class="movie-content">
+    <div class="left">
+        <h1 class="movie-title">{{title}}</h1>
+        <div role="doc-subtitle" class="movie-tagline">{{tagline}}</div>
+
+        <div role="doc-abstract" class="movie-overview">
+            {{overview}}
+        </div>
+
+        <a href="#" class="movie-homepage"></a>
+
+        <div class="spacer"></div>
+
+        <footer>
+            <ul>
+                <li>Released: {{release_date}}</li>
+                <li>Genres:
+                    <ul class="genres">{{#genres}}
+                        <li>{{name}}</li>
+                    {{/genres}}</ul>
+                </li>
+                {{#original_title}}
+                    <li>Original title: "{{original_title}}"</li>
+                {{/original_title}}
+                <li>Adult: {{#adult}}yes{{/adult}}{{^adult}}no{{/adult}}</li>
+            </ul>
+        </footer>
+    </div>
+
+    {{#poster_path}}
+    <div class="right">
+        <img class="movie-poster" width="400" height="600" alt="Movie poster" src="{{poster_full}}" />
+    </div>
+    {{/poster_path}}
+</div>

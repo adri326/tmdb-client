@@ -150,14 +150,14 @@ body {
     object-fit: contain;
 }
 
-#movie-dialog-content {
+.movie-content {
     display: flex;
     flex-direction: row;
     justify-content: stretch;
     align-items: stretch;
 }
 
-#movie-dialog-content > .left {
+.movie-content > .left {
     flex: 1;
     min-width: 24rem;
     padding-left: 1rem;
@@ -172,7 +172,7 @@ body {
     flex-grow: 1;
 }
 
-#movie-dialog-content h1 {
+.movie-content h1 {
     font-size: 28pt;
     font-weight: 300;
     margin-top: 0.5rem;
@@ -181,7 +181,7 @@ body {
     margin-block-end: 0;
 }
 
-#movie-dialog-content .movie-tagline {
+.movie-content .movie-tagline {
     /* margin-left: 1rem; */
     font-size: 14pt;
     font-weight: 400;
@@ -189,34 +189,47 @@ body {
     color: #202020;
 }
 
-#movie-dialog-content .movie-overview {
+.movie-content .movie-overview {
     margin-top: 1rem;
     margin-bottom: 1rem;
 }
 
-#movie-dialog-content .movie-homepage {
+.movie-content .movie-homepage {
     color: #202020;
     text-decoration: none;
 }
 
-#movie-dialog-content .movie-homepage:hover {
+.movie-content .movie-homepage:hover {
     text-decoration: underline;
 }
 
-#movie-dialog-content footer > ul {
+.movie-content footer > ul {
     list-style: none;
     padding-left: 0;
     color: #202020;
     font-style: italic;
 }
 
-#movie-dialog-content > .right {
+.movie-content > .right {
     margin-top: 2.5em;
     flex: 0;
 }
 
 .movie-poster {
     margin: 0.5em;
+}
+
+ul.genres {
+    list-style: none;
+    padding-left: 0;
+    display: inline-flex;
+    flex-direction: row;
+}
+
+ul.genres > li:not(:last-child)::after {
+    content: ",";
+    display: inline-block;
+    margin-right: 0.25em;
 }
 
 #movie-dialog-loading {
@@ -263,11 +276,11 @@ body {
         background: #404040;
     }
 
-    #movie-dialog-content .movie-tagline {
+    .movie-content .movie-tagline {
         color: #d0d0d0;
     }
 
-    #movie-dialog-content footer > ul {
+    .movie-content footer > ul {
         color: #d0d0d0;
     }
 
@@ -275,7 +288,7 @@ body {
         color: #a0a0a0;
     }
 
-    #movie-dialog-content .movie-homepage {
+    .movie-content .movie-homepage {
         color: #d0d0d0;
     }
 }

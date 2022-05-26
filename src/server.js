@@ -27,44 +27,23 @@ app.get("/", async (req, res, next) => {
     }));
 });
 
-// app.get("/page/:page", async (req, res, next) => {
-//     let match = /^\d+$/.exec(req.params.page);
-//     res.setHeader("Content-Type", "text/html");
-
-//     if (!match) {
-//         res.statusCode = 400;
-//         return res.send("Expected page to be a number!");
-//     }
-
-//     const page_template = fs.readFileSync("public/page.html", "utf8");
-//     const movie_template = fs.readFileSync("public/movie.html", "utf8");
-
-//     let view = {
-//         movies: await api.get_now_playing(+match[0])
-//     };
-
-//     res.send(mustache.render(page_template, view, {
-//         render_movie: movie_template
-//     }));
-// });
-
-app.get("/api/rendered/now_playing/:page", (req, res, next) => {
-    let match = /^\d+$/.exec(req.params.page);
+app.get("/api/movie/:id", (req, res, next) => {
+    let match = /^\d+$/.exec(req.params.id);
     res.setHeader("Content-Type", "application/json");
 
     if (!match) {
         res.statusCode = 400;
         return res.send(JSON.stringify({
-            error: "Expected page to be a number, got " + req.params.page
+            error: "Expected id to be a number, got " + req.params.id
         }));
     }
 
-    const movie_template = fs.readFileSync("public/movie.html", "utf8");
+    const dialog_template = fs.readFileSync("public/dialog.html", "utf8");
 
-    api.get_now_playing(+match[0]).then(movies => {
-        res.send(JSON.stringify(movies.map(movie => {
-            return mustache.render(movie_template, movie);
-        })));
+    api.get_movie(+match[0]).then(movie => {
+        res.send(JSON.stringify({
+            value: mustache.render(dialog_template, movie)
+        }));
     }).catch(err => {
         res.statusCode = 500;
         console.error(err);
@@ -85,30 +64,12 @@ app.get("/api/now_playing/:page", (req, res, next) => {
         }));
     }
 
+    const movie_template = fs.readFileSync("public/movie.html", "utf8");
+
     api.get_now_playing(+match[0]).then(movies => {
-        res.send(JSON.stringify(movies));
-    }).catch(err => {
-        res.statusCode = 500;
-        console.error(err);
-        res.send(JSON.stringify({
-            error: err.toString()
-        }));
-    });
-});
-
-app.get("/api/movie/:id", (req, res, next) => {
-    let match = /^\d+$/.exec(req.params.id);
-    res.setHeader("Content-Type", "application/json");
-
-    if (!match) {
-        res.statusCode = 400;
-        return res.send(JSON.stringify({
-            error: "Expected id to be a number, got " + req.params.id
-        }));
-    }
-
-    api.get_movie(+match[0]).then(movie => {
-        res.send(JSON.stringify(movie));
+        res.send(JSON.stringify(movies.map(movie => {
+            return mustache.render(movie_template, movie);
+        })));
     }).catch(err => {
         res.statusCode = 500;
         console.error(err);

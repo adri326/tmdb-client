@@ -8,30 +8,24 @@ const dialog = new A11yDialog(dialog_container);
 const dialog_content = document.getElementById("movie-dialog-content");
 const dialog_loading = document.getElementById("movie-dialog-loading");
 
-const dialog_fields = {
-    title: dialog_content.querySelector(".movie-title"),
-    tagline: dialog_content.querySelector(".movie-tagline"),
-    overview: dialog_content.querySelector(".movie-overview"),
-    homepage: dialog_content.querySelector(".movie-homepage"),
-
-    poster: dialog_content.querySelector(".movie-poster"),
-
-    genres: dialog_content.querySelector(".movie-genres"),
-    adult: dialog_content.querySelector(".movie-adult"),
-    date: dialog_content.querySelector(".movie-date"),
-};
-
-let movies = new Map();
 
 // Stores information about the current request being made
 let current_req = null;
-
 function fetch_movie(id) {
     return fetch(`/api/movie/${id}`).then(async res => {
-        if (res.ok) return await res.json();
-        else throw new Error(`Error while fetching /api/movie/${id}: ${await res.text()}`);
+        if (!res.ok) {
+            throw new Error(`Error while fetching /api/movie/${id}: ${await res.text()}`);
+        }
+        let json = await res.json();
+        let parser = new DOMParser();
+        let parsed = parser.parseFromString(json.value, "text/html");
+
+        return parsed.querySelector(".movie-content");
     });
 }
+
+// Cache for the dialog boxes for each movie
+let movies = new Map();
 
 function show_modal(id) {
     if (!movies.has(id)) {
@@ -46,7 +40,7 @@ function show_modal(id) {
         fetch_movie(id).then(movie => {
             movies.set(id, movie);
             if (!current_req.abort) {
-                update_dialog(movies.get(id));
+                update_dialog(movie);
             }
         }).catch(err => {
             // TODO: close the dialog box or print an error in it
@@ -58,42 +52,16 @@ function show_modal(id) {
     dialog.show();
 }
 
-dialog.on("hide", () => {
-    dialog_fields.poster.src = "";
-});
-
-// TODO: hide/show things with aria-hidden="true" instead of class="hidden"
 function update_dialog(movie) {
     dialog_content.classList.remove("hidden");
     dialog_loading.classList.add("hidden");
 
-    dialog_fields.title.innerText = movie.title;
-    dialog_fields.tagline.innerText = movie.tagline;
-    dialog_fields.overview.innerText = movie.overview;
-
-    dialog_fields.poster.src = `https://themoviedb.org/t/p/w400/${movie.poster_path}`;
-    dialog_fields.poster.alt = `Poster for the movie ${movie.title}`;
-
-    if (movie.homepage) {
-        dialog_fields.homepage.classList.remove("hidden");
-        dialog_fields.homepage.href = movie.homepage;
-        dialog_fields.homepage.innerText = `More details on ${new URL(movie.homepage).hostname}`;
-    } else {
-        dialog_fields.homepage.classList.add("hidden");
+    // Empty dialog_content
+    while (dialog_content.childNodes.length) {
+        dialog_content.removeChild(dialog_content.firstChild);
     }
 
-    dialog_fields.date.innerText = `Released: ${movie.release_date}`;
-
-    if (movie.genres) {
-        dialog_fields.genres.classList.remove("hidden");
-        dialog_fields.genres.innerText = `Genres: ${movie.genres.map(genre => genre.name).join(", ")}`;
-    } else {
-        dialog_fields.genres.classList.add("hidden");
-    }
-
-    dialog_fields.adult.innerText = "Adults only: " + (movie.adult ? "yes" : "no");
-
-    console.log(movie);
+    dialog_content.appendChild(movie);
 }
 
 function register_modal(element, movie_id = null) {
@@ -118,7 +86,10 @@ function register_modal(element, movie_id = null) {
 movie_list.querySelectorAll("li").forEach(element => register_modal(element));
 
 async function get_page(page) {
-    let response = await fetch(`/api/rendered/now_playing/${page}`);
+    let response = await fetch(`/api/now_playing/${page}`);
+    if (!response.ok) {
+        throw new Error(`Error while fetching /api/now_playing/${page}: ${await response.text()}`);
+    }
     let movies = await response.json();
 
     let fragment = document.createDocumentFragment();

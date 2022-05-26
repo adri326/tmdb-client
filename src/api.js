@@ -68,6 +68,10 @@ export class Movie {
     get poster_preview() {
         return `http://themoviedb.org/t/p/w200/${this.poster_path}`;
     }
+
+    get poster_full() {
+        return `http://themoviedb.org/t/p/w400/${this.poster_path}`;
+    }
 }
 
 let movie_cache = new Map();
