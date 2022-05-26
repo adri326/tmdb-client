@@ -1,16 +1,24 @@
 import A11yDialog from "https://cdn.jsdelivr.net/npm/a11y-dialog@7/dist/a11y-dialog.esm.min.js"
 
+/// Contains a list of cards for movies
 const movie_list = document.getElementById("movie-list");
 
 const dialog_container = document.getElementById("movie-dialog");
 const dialog = new A11yDialog(dialog_container);
 
+/// Contains the actual content in the dialog
 const dialog_content = document.getElementById("movie-dialog-content");
+/// The "loading" screen for the dialog
 const dialog_loading = document.getElementById("movie-dialog-loading");
 
-
-// Stores information about the current request being made
+/// Stores information about the current request being made
 let current_req = null;
+
+/**
+* Fetches information about a movie, rendered on the server side as a dialog box, then parses it and returns it.
+* @param id - The ID of the movie to render and fetch
+* @returns a Promise returning an Element
+**/
 function fetch_movie(id) {
     return fetch(`/api/movie/${id}`).then(async res => {
         if (!res.ok) {
@@ -24,10 +32,30 @@ function fetch_movie(id) {
     });
 }
 
+/**
+* Used by `show_modal` to replace the contents of the dialog box in the DOM.
+* @param movie - an Element to replace the children of `dialog_content` with.
+**/
+function update_dialog(movie) {
+    dialog_content.classList.remove("hidden");
+    dialog_loading.classList.add("hidden");
+
+    // Empty dialog_content
+    while (dialog_content.childNodes.length) {
+        dialog_content.removeChild(dialog_content.firstChild);
+    }
+
+    dialog_content.appendChild(movie);
+}
+
 // Cache for the dialog boxes for each movie
 let movies = new Map();
 
-function show_modal(id) {
+/**
+* Calls `fetch_movie` if the movie dialog isn't cached, and displays it as the dialog box' content.
+* @param id - The ID of the movie to display in the dialog.
+**/
+export function show_modal(id) {
     if (!movies.has(id)) {
         dialog_loading.classList.remove("hidden");
         dialog_content.classList.add("hidden");
@@ -52,19 +80,12 @@ function show_modal(id) {
     dialog.show();
 }
 
-function update_dialog(movie) {
-    dialog_content.classList.remove("hidden");
-    dialog_loading.classList.add("hidden");
-
-    // Empty dialog_content
-    while (dialog_content.childNodes.length) {
-        dialog_content.removeChild(dialog_content.firstChild);
-    }
-
-    dialog_content.appendChild(movie);
-}
-
-function register_modal(element, movie_id = null) {
+/**
+* Register an event listener for the given movie card
+* @param element - The DOM element for the movie card
+* @param movie_id - The ID of the movie; if set to null, the ID is extracted from `element.id` (in the format `movie-ID`)
+**/
+export function register_modal(element, movie_id = null) {
     if (movie_id === null) {
         let match = /^movie-(\d+)$/.exec(element.id);
         if (!match) {
@@ -85,6 +106,10 @@ function register_modal(element, movie_id = null) {
 
 movie_list.querySelectorAll("li").forEach(element => register_modal(element));
 
+/**
+* Loads a new page of cards. Should only be called once per page to load.
+* @param page - The page index
+**/
 async function get_page(page) {
     let response = await fetch(`/api/now_playing/${page}`);
     if (!response.ok) {
@@ -105,9 +130,16 @@ async function get_page(page) {
 
 window.get_page = get_page;
 
-const SCROLL_MARGIN = 380 * 2;
+/// The vertical distance to the bottom of the page that a card must be at for a new page to be loaded
+export const SCROLL_MARGIN = 380 * 2;
+/// Whether a new page is being loaded
 let page_req = false;
+/// The current index of the pages
 let page = 2;
+
+/**
+* Loads a new page when the bottom of the page is reached and no new page is being loaded
+**/
 function update_scroll() {
     if (page_req) return;
 

@@ -12,7 +12,7 @@ TODO:
 - [x] implement a modal screen when the client clicks on a movie
 - [x] implement infinite scrolling
 - [x] use mustache.js to handle the dialog box
-- [ ] clarify and document frontend
+- [x] clarify and document frontend
 - [ ] arrow controls
 - [ ] revise the "about" footer
 - [x] mobile layout
