@@ -1,5 +1,7 @@
 import A11yDialog from "https://cdn.jsdelivr.net/npm/a11y-dialog@7/dist/a11y-dialog.esm.min.js"
 
+const movie_list = document.getElementById("movie-list");
+
 const dialog_container = document.getElementById("movie-dialog");
 const dialog = new A11yDialog(dialog_container);
 
@@ -56,6 +58,10 @@ function show_modal(id) {
     dialog.show();
 }
 
+dialog.on("hide", () => {
+    dialog_fields.poster.src = "";
+});
+
 // TODO: hide/show things with aria-hidden="true" instead of class="hidden"
 function update_dialog(movie) {
     dialog_content.classList.remove("hidden");
@@ -109,8 +115,44 @@ function register_modal(element, movie_id = null) {
     });
 }
 
-document.querySelectorAll("#movie-list > li").forEach(element => register_modal(element));
+movie_list.querySelectorAll("li").forEach(element => register_modal(element));
 
-dialog.on("hide", () => {
-    dialog_fields.poster.src = "";
-});
+async function get_page(page) {
+    let response = await fetch(`/api/rendered/now_playing/${page}`);
+    let movies = await response.json();
+
+    let fragment = document.createDocumentFragment();
+    let parser = new DOMParser();
+    for (let movie of movies) {
+        let parsed = parser.parseFromString(movie, "text/html");
+        let element = parsed.querySelector("li");
+        register_modal(element);
+        fragment.appendChild(element);
+    }
+    movie_list.appendChild(fragment);
+}
+
+window.get_page = get_page;
+
+const SCROLL_MARGIN = 380 * 2;
+let page_req = false;
+let page = 2;
+function update_scroll() {
+    if (page_req) return;
+
+    let bounding = movie_list.lastElementChild.getBoundingClientRect();
+
+    if (bounding.bottom <= window.innerHeight + SCROLL_MARGIN) {
+        page_req = true;
+        get_page(page).then(_ => {
+            page++;
+            page_req = false;
+        }).catch(err => {
+            console.error(err);
+            page_req = false;
+        });
+    }
+}
+
+window.addEventListener("scroll", update_scroll);
+update_scroll();

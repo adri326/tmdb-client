@@ -15,19 +15,11 @@
 <body>
     <main>
         <ul id="movie-list">{{#movies}}
-            <li tabindex="0" id="movie-{{id}}">
-                <h2>{{title}}</h2>
-                <img class="poster-preview" loading="lazy" src="{{poster_preview}}" width="200" height="300" alt="Poster preview for {{title}}" />
-                <div class="spacer"></div>
-                <footer>
-                    <i class="date">{{release_date}}</i>
-                    <!-- TODO: adult icon, status indicator for upcoming movies -->
-                </footer>
-            </li>
+            {{>render_movie}}
         {{/movies}}</ul>
     </main>
 
-    <div class="dialog-container" id="movie-dialog" aria-labelledby="movie-title" aria-hidden="true">
+    <div class="dialog-container" id="movie-dialog" aria-hidden="true">
         <div class="dialog-overlay" data-a11y-dialog-hide></div>
 
         <div class="dialog-box" role="document">
