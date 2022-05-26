@@ -27,6 +27,12 @@ body {
     border: 1px solid rgba(0, 0, 0, 0.125);
     box-shadow: 0px 0.125em 0.5em -0.125em rgba(0, 0, 0, 0.25);
 
+    display: flex;
+    flex-direction: column;
+    min-height: 300px;
+    justify-content: stretch;
+    align-items: stretch;
+
     cursor: pointer;
     transition: border 0.2s, box-shadow 0.2s, background 0.2s;
 }
@@ -107,7 +113,10 @@ body {
     z-index: 1;
     background: #d0d0d0;
     min-height: 10em;
-    min-width: 40em;
+    min-width: 60vw;
+    max-width: 80em;
+    margin-left: 2em;
+    margin-right: 2em;
 }
 
 .dialog-box .dialog-close {
@@ -131,6 +140,91 @@ body {
 .dialog-box .dialog-close:hover, .dialog-box .dialog-close:active, .dialog-box .dialog-close:focus {
     border: 1px solid rgba(0, 0, 0, 0.8);
     background: #d0d0d0;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.movie-poster, .poster-preview {
+    object-fit: contain;
+}
+
+#movie-dialog-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+#movie-dialog-content > .left {
+    flex: 1;
+    min-width: 24rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    min-height: 600px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.spacer {
+    flex-grow: 1;
+}
+
+#movie-dialog-content h1 {
+    font-size: 28pt;
+    font-weight: 300;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+    margin-block-start: 0;
+    margin-block-end: 0;
+}
+
+#movie-dialog-content .movie-tagline {
+    /* margin-left: 1rem; */
+    font-size: 14pt;
+    font-weight: 400;
+    margin-bottom: 1.0rem;
+    color: #202020;
+}
+
+#movie-dialog-content .movie-overview {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+#movie-dialog-content .movie-homepage {
+    color: #202020;
+    text-decoration: none;
+}
+
+#movie-dialog-content .movie-homepage:hover {
+    text-decoration: underline;
+}
+
+#movie-dialog-content footer > ul {
+    list-style: none;
+    padding-left: 0;
+    color: #202020;
+    font-style: italic;
+}
+
+#movie-dialog-content > .right {
+    margin-top: 2.5em;
+    flex: 0;
+}
+
+.movie-poster {
+    margin: 0.5em;
+}
+
+#movie-dialog-loading {
+    color: #404040;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -167,5 +261,21 @@ body {
     .dialog-box .dialog-close:hover, .dialog-box .dialog-close:active, .dialog-box .dialog-close:focus {
         border: 1px solid rgba(255, 255, 255, 0.8);
         background: #404040;
+    }
+
+    #movie-dialog-content .movie-tagline {
+        color: #d0d0d0;
+    }
+
+    #movie-dialog-content footer > ul {
+        color: #d0d0d0;
+    }
+
+    #movie-dialog-loading {
+        color: #a0a0a0;
+    }
+
+    #movie-dialog-content .movie-homepage {
+        color: #d0d0d0;
     }
 }

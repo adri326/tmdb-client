@@ -10,3 +10,4 @@ TODO:
 - [ ] implement infinite scrolling
 - [ ] clarify and document frontend
 - [ ] cache for the pictures
+- [ ] arrow controls
