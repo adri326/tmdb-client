@@ -20,9 +20,9 @@ let current_req = null;
 * @returns a Promise returning an Element
 **/
 function fetch_movie(id) {
-    return fetch(`/api/movie/${id}`).then(async res => {
+    return fetch(`/movie/${id}`).then(async res => {
         if (!res.ok) {
-            throw new Error(`Error while fetching /api/movie/${id}: ${await res.text()}`);
+            throw new Error(`Error while fetching /movie/${id}: ${await res.text()}`);
         }
         let json = await res.json();
         let parser = new DOMParser();
@@ -111,9 +111,9 @@ movie_list.querySelectorAll("li").forEach(element => register_modal(element));
 * @param page - The page index
 **/
 async function get_page(page) {
-    let response = await fetch(`/api/now_playing/${page}`);
+    let response = await fetch(`/now_playing/${page}`);
     if (!response.ok) {
-        throw new Error(`Error while fetching /api/now_playing/${page}: ${await response.text()}`);
+        throw new Error(`Error while fetching /now_playing/${page}: ${await response.text()}`);
     }
     let movies = await response.json();
 
@@ -135,7 +135,7 @@ export const SCROLL_MARGIN = 380 * 2;
 /// Whether a new page is being loaded
 let page_req = false;
 /// The current index of the pages
-let page = 2;
+window.page++;
 
 /**
 * Loads a new page when the bottom of the page is reached and no new page is being loaded
@@ -147,8 +147,8 @@ function update_scroll() {
 
     if (bounding.bottom <= window.innerHeight + SCROLL_MARGIN) {
         page_req = true;
-        get_page(page).then(_ => {
-            page++;
+        get_page(window.page).then(_ => {
+            window.page++;
             page_req = false;
         }).catch(err => {
             console.error(err);

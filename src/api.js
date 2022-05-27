@@ -121,7 +121,7 @@ export class Movie {
         if (this.loading_poster) return null;
         this.loading_poster = true;
 
-        return get_poster_preview(movie_raw.id).then(_ => {}).catch(console.error);
+        return get_poster_preview(this.id).then(_ => {}).catch(console.error);
     }
 
     /**
@@ -134,7 +134,7 @@ export class Movie {
         if (get_poster_preview.has(this.id)) {
             return `/preview/${this.id}.jpg`;
         } else {
-            return `http://themoviedb.org/t/p/w200/${this.poster_path}`;
+            return `https://themoviedb.org/t/p/w200/${this.poster_path}`;
         }
     }
 
@@ -142,7 +142,7 @@ export class Movie {
     * Returns the URL of a 400px-wide poster on TMDB's website.
     **/
     get poster_full() {
-        return `http://themoviedb.org/t/p/w400/${this.poster_path}`;
+        return `https://themoviedb.org/t/p/w400/${this.poster_path}`;
     }
 
     /**

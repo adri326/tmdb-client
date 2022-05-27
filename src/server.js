@@ -33,9 +33,16 @@ const dialog_template = fs.readFileSync("public/dialog.html", "utf8");
 * Serves the index page, generated from `index_template` and `movie_template` (as a partial)
 * @route GET /
 **/
-app.get("/", async (req, res, next) => {
+app.get("/:page?", async (req, res, next) => {
+    let page = +(req.params.page ?? 1);
+    if (page < 1 || !Number.isInteger(page)) page = 1;
+
     let view = {
-        movies: await api.get_now_playing()
+        movies: await api.get_now_playing(page),
+        page,
+        first_page: page == 1,
+        prev_page: Math.max(page - 1, 1),
+        next_page: page + 1
     };
 
     res.setHeader("Content-Type", "text/html");
@@ -71,11 +78,11 @@ app.get("/preview/:id", (req, res, next) => {
 
 /**
 * Serves the dialog box for a given movie, generated from `dialog_template`.
-* @route /api/movie/{id}
+* @route /movie/{id}
 * @param id - The movie ID - Number
 * @returns `{value: "Rendered HTML"}`
 **/
-app.get("/api/movie/:id", (req, res, next) => {
+app.get("/movie/:id", (req, res, next) => {
     let match = /^\d+$/.exec(req.params.id);
     res.setHeader("Content-Type", "application/json");
 
@@ -101,11 +108,11 @@ app.get("/api/movie/:id", (req, res, next) => {
 
 /**
 * Serves a single page of the `now_playing` endpoint, rendered using `movie_template`
-* @route /api/now_playing/{page}
+* @route /now_playing/{page}
 * @param page - The page index - Number
 * @returns `["Rendered movie 1", "Rendered movie 2", ...]`
 **/
-app.get("/api/now_playing/:page", (req, res, next) => {
+app.get("/now_playing/:page", (req, res, next) => {
     let match = /^\d+$/.exec(req.params.page);
     res.setHeader("Content-Type", "application/json");
 
@@ -129,4 +136,6 @@ app.get("/api/now_playing/:page", (req, res, next) => {
     });
 });
 
-app.listen(8080);
+app.listen(8080, () => {
+    console.log("Server listening on port 8080!");
+});

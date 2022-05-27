@@ -7,16 +7,28 @@
     <title>TMDB Client</title>
     <script src="/static/index.js" type="module" defer></script>
     <link rel="stylesheet" href="/static/style.css">
-
+    <script>
+        window.page = {{page}};
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <main>
+        <h1>TMDB Client</h1>
         <ul id="movie-list">{{#movies}}
             {{>render_movie}}
         {{/movies}}</ul>
+        <noscript>
+            <div class="nav-buttons">
+                <span>Page {{page}}</span>
+                <div>
+                    <a class="nav-button" href="/{{prev_page}}" {{#first_page}}disabled{{/first_page}}>Page {{prev_page}}</a>
+                    <a class="nav-button" href="/{{next_page}}">Page {{next_page}}</a>
+                </div>
+            </div>
+        </noscript>
     </main>
 
     <div class="dialog-container" id="movie-dialog" aria-hidden="true">
@@ -37,9 +49,11 @@
 
     <footer id="about">
         <details>
-            <summary>About</summary>
-            This product uses the TMDB API but is not endorsed or certified by TMDB.
-            <img src="/static/assets/tmdb-logo-long.svg" class="tmdb-logo">
+            <summary id="about-summary">About</summary>
+            <div>
+                This product uses the TMDB API but is not endorsed or certified by TMDB.
+                <img src="/static/assets/tmdb-logo-long.svg" class="tmdb-logo">
+            </div>
         </details>
     </footer>
 </body>
