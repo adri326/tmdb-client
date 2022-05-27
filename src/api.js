@@ -56,7 +56,7 @@ export function get(url, params = {}) {
             .use(domain_prefix)
             .use(api_throttle.plugin())
             .end((err, res) => {
-                if (err) reject(new Error(`Received HTTP code ${err.status} while fetching ${url}:\n${err.response.text}`));
+                if (err) reject(new Error(`Received HTTP code ${err.status} while fetching ${url}:\n${err.response?.text}`));
                 else resolve(res.body);
             });
     });

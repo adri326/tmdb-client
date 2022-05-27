@@ -8,7 +8,9 @@
             {{overview}}
         </div>
 
-        <a href="#" class="movie-homepage"></a>
+        {{#homepage}}
+            <a href="{{{.}}}" class="movie-homepage">More info on {{.}}</a>
+        {{/homepage}}
 
         <div class="spacer"></div>
 
